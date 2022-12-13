@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DICOMcloud.DataAccess.Database</RootNamespace>
     <AssemblyName>DICOMcloud.DataAccess.Database</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -48,6 +48,12 @@
   <ItemGroup>
     <Compile Include="..\Resources\Version\AssemblyInfo.Version.cs">
       <Link>Properties\AssemblyInfo.Version.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
+    </Compile>
+    <Compile Include="..\Resources\Version\AssemblyInfo.Version1.cs">
+      <Link>Properties\AssemblyInfo.Version1.cs</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
