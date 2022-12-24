@@ -1,16 +1,16 @@
 ﻿using DICOMcloud.Extensions;
 using DICOMcloud.IO;
-using Microsoft.Azure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.Collections.Generic;
 
 namespace DICOMcloud.Azure.IO
 {
-    public class AzureStorageService : MediaStorageService//, IEnumerable<IStorageContainer>
+    public class AzureStorageService : MediaStorageService
     {
-        public AzureStorageService ( string connectionName )
-        : this ( CloudStorageAccount.Parse( CloudConfigurationManager.GetSetting(connectionName) ) )
+        public AzureStorageService ( string connectionName, IConfiguration config )
+        : this ( CloudStorageAccount.Parse( config.GetConnectionString(connectionName)))
         {}
 
         public AzureStorageService ( CloudStorageAccount storageAccount )
@@ -27,19 +27,28 @@ namespace DICOMcloud.Azure.IO
 
             CloudBlobContainer cloudContainer = __CloudClient.GetContainerReference ( containerKey );
 
-            cloudContainer.CreateIfNotExists ( );
+            cloudContainer.CreateIfNotExistsAsync( ).Wait();
 
             return new AzureContainer ( cloudContainer );
         }
 
-        protected override IEnumerable<IStorageContainer> GetContainers ( string containerKey ) 
+        protected override async IAsyncEnumerable<IStorageContainer> GetContainers ( string containerKey ) 
         {
             containerKey = GetValidContainerKey ( containerKey );
+            BlobContinuationToken token = null ;
 
-            foreach ( var container in __CloudClient.ListContainers ( containerKey, ContainerListingDetails.None ) )
+            do
             {
-                yield return GetContainer ( containerKey ) ;
-            }
+                var result = await __CloudClient.ListContainersSegmentedAsync(containerKey, ContainerListingDetails.None, null, token, new BlobRequestOptions(), null);
+                
+                token = result.ContinuationToken;
+
+                foreach ( var container in result.Results)
+                {
+                    yield return GetContainer ( containerKey ) ;
+                }
+
+            } while (token != null);
         }
 
         private void Init(CloudBlobClient blobClient)
@@ -59,7 +68,7 @@ namespace DICOMcloud.Azure.IO
 
             CloudBlobContainer cloudContainer = __CloudClient.GetContainerReference ( containerKey ) ;
 
-            return cloudContainer.Exists ( ) ;
+            return cloudContainer.ExistsAsync ( ).Result;
         }
 
         private static string GetValidContainerKey ( string containerKey )

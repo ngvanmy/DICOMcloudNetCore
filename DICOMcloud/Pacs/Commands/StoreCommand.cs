@@ -1,6 +1,4 @@
-﻿using Dicom.Imaging.Codec;
-using DICOMcloud.IO;
-using DICOMcloud;
+﻿using DICOMcloud.IO;
 using DICOMcloud.DataAccess;
 using DICOMcloud.Media;
 using System;
@@ -8,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using DICOMcloud.Messaging;
-using Dicom;
+using FellowOakDicom;
 
 namespace DICOMcloud.Pacs.Commands
 {
@@ -113,7 +111,7 @@ namespace DICOMcloud.Pacs.Commands
         )
         {
             List<DicomMediaLocations> mediaLocations = new List<DicomMediaLocations> ( ) ;
-            DicomDataset storageDataset = dicomObject.Clone(DicomTransferSyntax.ExplicitVRLittleEndian).NotValidated();
+            DicomDataset storageDataset = dicomObject.Clone().NotValidated();
             List<DicomMediaProperties> storedMedia = new List<DicomMediaProperties> ();
             DicomMediaProperties defaultMedia = new DicomMediaProperties(MimeMediaTypes.DICOM, DicomTransferSyntax.ExplicitVRLittleEndian.UID.UID);
 

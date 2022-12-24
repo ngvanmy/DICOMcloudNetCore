@@ -1,17 +1,13 @@
 ﻿using DICOMcloud.Extensions;
 using DICOMcloud.Wado.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
 
 namespace DICOMcloud.Wado.WebApi.Controllers
 {
-    public class MetadataController : ApiController
+    public class MetadataController : ControllerBase
     {
         protected IWadoRsService WadoService { get; set; }
 
@@ -26,31 +22,31 @@ namespace DICOMcloud.Wado.WebApi.Controllers
         [HttpGet]
         [Route("wadors/studies/{StudyInstanceUID}/metadata")]
         [Route("api/studies/{StudyInstanceUID}/metadata")]
-        public HttpResponseMessage GetStudiesMetadata
+        public async Task<HttpResponseMessage> GetStudiesMetadata
         (
             [ModelBinder(typeof(RsStudiesRequestModelBinder))]
             IWadoRsStudiesRequest request
         )
         {
-            return WadoService.RetrieveStudyMetadata(request);
+            return await WadoService.RetrieveStudyMetadata(request);
         }
 
         [HttpGet]
         [Route("wadors/studies/{StudyInstanceUID}/series/{SeriesInstanceUID}/metadata")]
         [Route("api/studies/{StudyInstanceUID}/series/{SeriesInstanceUID}/metadata")]
-        public HttpResponseMessage GetSeriesMetadata
+        public async Task<HttpResponseMessage> GetSeriesMetadata
         (
             [ModelBinder(typeof(RsSeriesRequestModelBinder))]
             IWadoRsSeriesRequest request
         )
         {
-            return WadoService.RetrieveSeriesMetadata(request);
+            return await WadoService.RetrieveSeriesMetadata(request);
         }
 
         [HttpGet]
         [Route("wadors/studies/{StudyInstanceUID}/series/{SeriesInstanceUID}/instances/{SOPInstanceUID}/metadata")]
         [Route("api/studies/{StudyInstanceUID}/series/{SeriesInstanceUID}/instances/{SOPInstanceUID}/metadata")]
-        public HttpResponseMessage GetInstanceMetadata
+        public async Task<HttpResponseMessage> GetInstanceMetadata
         (
             [ModelBinder(typeof(RsObjectRequestModelBinder))]
             IWadoRsInstanceRequest request
@@ -58,7 +54,7 @@ namespace DICOMcloud.Wado.WebApi.Controllers
         {
             try
             {
-                return WadoService.RetrieveInstanceMetadata(request);
+                return await WadoService.RetrieveInstanceMetadata(request);
             }
             catch (Exception ex)
             {

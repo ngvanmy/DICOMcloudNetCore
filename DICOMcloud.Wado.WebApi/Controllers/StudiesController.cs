@@ -1,16 +1,12 @@
 ﻿using DICOMcloud.Wado.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
 
 namespace DICOMcloud.Wado.WebApi.Controllers
 {
-    public class StudiesController : ApiController
+    public class StudiesController : ControllerBase
     {
         protected IQidoRsService QidoService { get; set; }
         protected IWebObjectStoreService StorageService { get; set; }
@@ -49,13 +45,13 @@ namespace DICOMcloud.Wado.WebApi.Controllers
         [HttpGet]
         [Route("wadors/studies/{StudyInstanceUID}")]
         [Route("api/studies/{StudyInstanceUID}")]
-        public HttpResponseMessage GetStudies
+        public async Task<HttpResponseMessage> GetStudies
         (
             [ModelBinder(typeof(RsStudiesRequestModelBinder))]
             IWadoRsStudiesRequest request
         )
         {
-            return WadoService.RetrieveStudy(request);
+            return await WadoService.RetrieveStudy(request);
         }
 
         [HttpPost]
@@ -65,7 +61,7 @@ namespace DICOMcloud.Wado.WebApi.Controllers
         [Route("api/studies/")]
         public async Task<HttpResponseMessage> Post(string studyInstanceUID = null)
         {
-            WebStoreRequest webStoreRequest = new WebStoreRequest(Request);
+            WebStoreRequest webStoreRequest = new WebStoreRequest(this.HttpContext.Request.ToHttpRequestMessage());
             IStudyId studyId = null;
 
 
@@ -74,12 +70,13 @@ namespace DICOMcloud.Wado.WebApi.Controllers
                 studyId = new ObjectId() { StudyInstanceUID = studyInstanceUID };
             }
 
-            if (!Request.Content.IsMimeMultipartContent("related"))
-            {
-                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
-            }
+            //todo: implement new file uploads
+            // if (! this.HttpContext.Request.ToHttpRequestMessage().Content.IsMimeMultipartContent("related"))
+            // {
+            //     throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+            // }
 
-            await Request.Content.ReadAsMultipartAsync(webStoreRequest);
+            // await this.HttpContext.Request.ToHttpRequestMessage().Content.ReadAsMultipartAsync(webStoreRequest);
 
             return await StorageService.Store(webStoreRequest, studyId);
         }

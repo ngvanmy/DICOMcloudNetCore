@@ -1,6 +1,6 @@
 ﻿using DICOMcloud.DataAccess;
 using DICOMcloud.Pacs.Commands;
-using fo = Dicom;
+using fo = FellowOakDicom;
 
 namespace DICOMcloud.Pacs
 {

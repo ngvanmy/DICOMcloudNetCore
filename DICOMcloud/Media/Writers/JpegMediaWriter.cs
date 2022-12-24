@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using fo = Dicom;
-using Dicom.Imaging;
-using Dicom.Imaging.Codec ;
+﻿using fo = FellowOakDicom;
 using DICOMcloud.IO;
 using System.IO;
 using System.Drawing;
+using FellowOakDicom.Imaging;
 
 namespace DICOMcloud.Media
 {
@@ -50,6 +44,7 @@ namespace DICOMcloud.Media
         {
             var frameIndex = frame - 1 ;
             var dicomImage = new DicomImage (dicomObject, frameIndex);
+            // Todo: Test as .AsSharedBitmap() doesn't seem to exist anymore
             var bitmap = dicomImage.RenderImage(frameIndex).As<Bitmap>();
             var stream = new MemoryStream ( ) ;
             

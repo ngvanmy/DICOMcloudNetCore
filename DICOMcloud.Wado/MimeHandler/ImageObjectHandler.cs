@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Dicom.Imaging;
-using Dicom.Imaging.Codec;
+using System.Threading.Tasks;
 using DICOMcloud.IO;
 
 using DICOMcloud.Media;
 using DICOMcloud.Pacs;
 using DICOMcloud.Wado.Models;
-using fo = Dicom;
 
 namespace DICOMcloud.Wado
 {
@@ -32,7 +29,7 @@ namespace DICOMcloud.Wado
         }
 
         
-        protected override WadoResponse DoProcess(IWadoUriRequest request, string mimeType)
+        protected override async Task<WadoResponse> DoProcess(IWadoUriRequest request, string mimeType)
         {
             var dcmLocation = MediaStorage.GetLocation ( MediaFactory.Create ( request, new DicomMediaProperties { MediaType = MimeMediaTypes.DICOM, 
                                                                                                                    TransferSyntax = (request.ImageRequestInfo != null ) ? request.ImageRequestInfo.TransferSyntax : "" } ) ) ;
@@ -44,7 +41,7 @@ namespace DICOMcloud.Wado
 
             //if (string.Compare(mimeType, MimeMediaTypes.DICOM, true) == 0)
             {
-                return new WadoResponse(Location.GetReadStream ( ), mimeType);
+                return new WadoResponse(await Location.GetReadStream(), mimeType);
             }
       }
    }

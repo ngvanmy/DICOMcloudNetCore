@@ -1,4 +1,4 @@
-﻿using fo = Dicom;
+﻿using fo = FellowOakDicom;
 using DICOMcloud.Wado.Models;
 using System;
 using System.Collections.Generic;
@@ -6,14 +6,13 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
 using DICOMcloud.Pacs;
 using DICOMcloud.Media;
-
 using DICOMcloud.DataAccess;
-using DICOMcloud;
 using DICOMcloud.Messaging;
-using Dicom;
+using FellowOakDicom;
+using Microsoft.Extensions.Options;
+using DICOMcloud.Wado.Configs;
 
 namespace DICOMcloud.Wado
 {
@@ -21,9 +20,11 @@ namespace DICOMcloud.Wado
     {
         private IObjectStoreService _storageService;
         private IRetrieveUrlProvider _urlProvider ;
+        private readonly IOptions<UrlOptions> _options;
 
-        public WebObjectStoreService ( IObjectStoreService storage, IRetrieveUrlProvider urlProvider = null ) 
+        public WebObjectStoreService ( IObjectStoreService storage, IOptions<UrlOptions> options, IRetrieveUrlProvider urlProvider = null ) 
         {
+            this._options = options ?? throw new ArgumentNullException(nameof(options));
             _storageService = storage ;
             _urlProvider    = urlProvider ;
         }
@@ -93,7 +94,7 @@ namespace DICOMcloud.Wado
 
         protected virtual WadoStoreResponse CreateWadoStoreResponseModel(IStudyId studyId)
         {
-            return new WadoStoreResponse(studyId, _urlProvider);
+            return new WadoStoreResponse(studyId,this._options, _urlProvider);
         }
 
         private async Task<WadoStoreResponse> StoreStudy 
@@ -177,7 +178,7 @@ namespace DICOMcloud.Wado
 
                 default:
                 {
-                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                    throw new Exception("Invalid dataset");
                 }
             }
 

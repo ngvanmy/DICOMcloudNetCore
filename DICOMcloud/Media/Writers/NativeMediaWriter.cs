@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DICOMcloud.IO;
-using Dicom;
-using Dicom.Imaging ;
-using Dicom.Imaging.Codec;
+using FellowOakDicom;
+using FellowOakDicom.Imaging.Codec;
 
 namespace DICOMcloud.Media
 {
@@ -56,8 +51,8 @@ namespace DICOMcloud.Media
                     return data;
                 }
 
-                var ds = data.Clone (transfer).NotValidated();
-
+                //var ds = data.Clone (transfer).NotValidated();
+                var ds = data.Clone().NotValidated();
                 ds.AddOrUpdate ( DicomTag.TransferSyntaxUID, transfer.UID.UID ) ;
 
                 return ds ;

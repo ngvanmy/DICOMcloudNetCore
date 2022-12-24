@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Web.Http;
-
+using Microsoft.AspNetCore.Mvc;
 
 namespace DICOMcloud.Wado.WebApi.Controllers
 {
-    public class OhifViewerController : ApiController
+    public class OhifViewerController : ControllerBase
     {
         protected IOhifService OhifService {get; set;}
 

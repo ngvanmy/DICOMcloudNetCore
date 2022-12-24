@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DICOMcloud.IO;
 using DICOMcloud;
-using fo = Dicom ;
+using fo = FellowOakDicom ;
 
 namespace DICOMcloud.Media
 {

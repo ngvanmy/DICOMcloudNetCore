@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using fo = Dicom;
-using Dicom;
+using fo = FellowOakDicom;
+using FellowOakDicom;
 
 namespace DICOMcloud.DataAccess.Database
 {

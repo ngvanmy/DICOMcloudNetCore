@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Linq;
-using Dicom.Imaging;
+using FellowOakDicom.Imaging;
 using Newtonsoft.Json;
-using Dicom;
+using FellowOakDicom;
 
 namespace DICOMcloud
 {
@@ -246,12 +246,12 @@ namespace DICOMcloud
 
         protected virtual void WriteVR_Binary ( DicomItem item, JsonWriter writer )
         {
-            Dicom.IO.Buffer.IByteBuffer buffer = GetItemBuffer ( item );
+            FellowOakDicom.IO.Buffer.IByteBuffer buffer = GetItemBuffer ( item );
 
 
-            if ( buffer is Dicom.IO.Buffer.IBulkDataUriByteBuffer )
+            if ( buffer is FellowOakDicom.IO.Buffer.IBulkDataUriByteBuffer )
             {
-                WriteBinaryValue ( writer, ( (Dicom.IO.Buffer.IBulkDataUriByteBuffer) buffer ).BulkDataUri, 
+                WriteBinaryValue ( writer, ( (FellowOakDicom.IO.Buffer.IBulkDataUriByteBuffer) buffer ).BulkDataUri, 
                                    JsonConstants.ELEMENT_BULKDATA ) ;
             }
             else
@@ -379,7 +379,7 @@ namespace DICOMcloud
             int level
         )
         {
-            Dicom.IO.Buffer.BulkDataUriByteBuffer data = null ;
+            FellowOakDicom.IO.Buffer.BulkDataUriByteBuffer data = null ;
 
             
             if ( reader.Read ( ) )
@@ -389,7 +389,7 @@ namespace DICOMcloud
                 
                 if ( !string.IsNullOrEmpty ( uri ) )
                 {
-                    data = new Dicom.IO.Buffer.BulkDataUriByteBuffer ( uri ) ;
+                    data = new FellowOakDicom.IO.Buffer.BulkDataUriByteBuffer ( uri ) ;
                 }
 
                 if ( tag == DicomTag.PixelData && level == 0 )
@@ -400,7 +400,7 @@ namespace DICOMcloud
                 }
                 else
                 {
-                    dataset.AddOrUpdate<Dicom.IO.Buffer.IByteBuffer> ( vr, tag, data ) ;
+                    dataset.AddOrUpdate<FellowOakDicom.IO.Buffer.IByteBuffer> ( vr, tag, data ) ;
                 }
             }
         }
@@ -416,13 +416,13 @@ namespace DICOMcloud
         {
             if ( reader.Read ( ) )
             {
-                Dicom.IO.Buffer.MemoryByteBuffer buffer = null ;
+                FellowOakDicom.IO.Buffer.MemoryByteBuffer buffer = null ;
                 string base64 = (string) reader.Value ;
             
                 
                 if ( !string.IsNullOrEmpty ( base64 ) )
                 {
-                    buffer = new Dicom.IO.Buffer.MemoryByteBuffer ( System.Convert.FromBase64String ( base64 ) ) ;
+                    buffer = new FellowOakDicom.IO.Buffer.MemoryByteBuffer ( System.Convert.FromBase64String ( base64 ) ) ;
                 }
             
                 if ( tag == DicomTag.PixelData && level == 0 )
@@ -434,7 +434,7 @@ namespace DICOMcloud
                 }
                 else
                 {
-                    dataset.AddOrUpdate<Dicom.IO.Buffer.IByteBuffer> ( vr, tag, buffer ) ;
+                    dataset.AddOrUpdate<FellowOakDicom.IO.Buffer.IByteBuffer> ( vr, tag, buffer ) ;
                 }
             }
         }
@@ -492,7 +492,7 @@ namespace DICOMcloud
                         TransferSyntaxUID = values.FirstOrDefault ( ) ; 
                     }
 
-                    dataset.AddOrUpdate<string> ( vr, tag, System.Text.Encoding.Default ,values.ToArray ( ) );                
+                        dataset.AddOrUpdate<string>(vr, tag, values.ToArray());          
                 }
                 break ;
             }
@@ -551,7 +551,7 @@ namespace DICOMcloud
                     personName.Add ( pnReader );
                 }
 
-                dataset.AddOrUpdate<string> ( tag,System.Text.Encoding.Default , personName.ToString ( ) );
+                dataset.AddOrUpdate<string> ( tag,personName.ToString ( ) );
 
                 break;
             }
@@ -588,6 +588,7 @@ namespace DICOMcloud
 
         private string GetTrimmedString ( string value )
         {
+            if (value == null) return String.Empty;
             return value.TrimEnd ( PADDING );
         }
 

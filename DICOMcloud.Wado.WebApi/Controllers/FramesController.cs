@@ -1,23 +1,21 @@
-﻿using DICOMcloud.Wado.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
+using DICOMcloud.Wado.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DICOMcloud.Wado.WebApi.Controllers
 {
-    public class FramesController : ApiController
+    [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/[controller]")]
+    public class FramesController : ControllerBase
     {
         protected IQidoRsService QidoService { get; set; }
         protected IWadoRsService WadoService { get; set; }
 
         public FramesController
         (
-            IQidoRsService qidoService, 
+            IQidoRsService qidoService,
             IWadoRsService wadoService
         )
         {
@@ -28,14 +26,13 @@ namespace DICOMcloud.Wado.WebApi.Controllers
         [HttpGet]
         [Route("wadors/studies/{StudyInstanceUID}/series/{SeriesInstanceUID}/instances/{SOPInstanceUID}/frames/{FrameList}")]
         [Route("api/studies/{StudyInstanceUID}/series/{SeriesInstanceUID}/instances/{SOPInstanceUID}/frames/{FrameList}")]
-        public HttpResponseMessage GetFrames
+        public async Task<HttpResponseMessage> GetFrames
         (
             [ModelBinder(typeof(RsFrameRequestModelBinder))]
             IWadoRsFramesRequest request
         )
         {
-            return WadoService.RetrieveFrames(request);
+            return await WadoService.RetrieveFrames(request);
         }
-
     }
 }

@@ -1,16 +1,11 @@
 ﻿using DICOMcloud.Wado.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
 
 namespace DICOMcloud.Wado.WebApi.Controllers
 {
-    public class SeriesController : ApiController
+    public class SeriesController : ControllerBase
     {
         protected IQidoRsService QidoService { get; set; }
         protected IWebObjectStoreService StorageService { get; set; }
@@ -50,13 +45,13 @@ namespace DICOMcloud.Wado.WebApi.Controllers
         [HttpGet]
         [Route("wadors/studies/{StudyInstanceUID}/series/{SeriesInstanceUID}")]
         [Route("api/studies/{StudyInstanceUID}/series/{SeriesInstanceUID}")]
-        public HttpResponseMessage GetSeries 
+        public async Task<HttpResponseMessage> GetSeries 
         ( 
             [ModelBinder(typeof(RsSeriesRequestModelBinder))] 
             IWadoRsSeriesRequest request 
         )
         {
-            return WadoService.RetrieveSeries ( request ) ;
+            return await WadoService.RetrieveSeries ( request ) ;
         }
 
         [HttpDelete]

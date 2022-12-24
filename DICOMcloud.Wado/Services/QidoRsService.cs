@@ -8,9 +8,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using DICOMcloud.IO;
-using Dicom;
+using FellowOakDicom;
 using System;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using DICOMcloud.Wado.Configs;
 
 namespace DICOMcloud.Wado
 {
@@ -18,40 +20,23 @@ namespace DICOMcloud.Wado
     {
         //TODO: move this to a global config class
         public const string MaximumResultsLimit_ConfigName = "qido:maximumResultsLimit" ;
+        private readonly IOptions<QidoOptions> _options;
         public const string Instance_Header_Name = "X-Dicom-Instance" ;
-
-        public int MaximumResultsLimit { get; set; }
         protected IObjectArchieveQueryService QueryService { get; set; }
         protected IDicomMediaIdFactory MediaIdFactory { get; set; }
         protected IMediaStorageService StorageService { get; set; }
 
-        public QidoRsService ( IObjectArchieveQueryService queryService ): this (queryService, null, null ) {}
+        private readonly IHttpContextAccessor _httpcontextaccessor;
 
-        public QidoRsService ( IObjectArchieveQueryService queryService, IDicomMediaIdFactory mediaIdFactory, IMediaStorageService storageService )
+        public QidoRsService ( IObjectArchieveQueryService queryService, IHttpContextAccessor httpcontextaccessor, IOptions<QidoOptions> options ): this (queryService, null, null, httpcontextaccessor, options) {}
+
+        public QidoRsService ( IObjectArchieveQueryService queryService, IDicomMediaIdFactory mediaIdFactory, IMediaStorageService storageService, IHttpContextAccessor httpcontextaccessor, IOptions<QidoOptions> options )
         {
+            this._options = options ?? throw new ArgumentException(nameof(options));
+            this._httpcontextaccessor = httpcontextaccessor;
             QueryService   = queryService ;
             MediaIdFactory = mediaIdFactory;
             StorageService = storageService ;
-
-            var maxResultLimit = System.Configuration.ConfigurationManager.AppSettings[MaximumResultsLimit_ConfigName] ;
-
-            if (!string.IsNullOrWhiteSpace(maxResultLimit))
-            {
-                int maxResultValue ;
-
-                if ( int.TryParse (maxResultLimit, out maxResultValue))
-                {
-                    MaximumResultsLimit = maxResultValue ;
-                }
-                else
-                {
-                    throw new ArgumentException (MaximumResultsLimit_ConfigName + " must be a valid integer");
-                }
-            }
-            else
-            {
-                MaximumResultsLimit = 12 ;            
-            }
         }
 
         public virtual HttpResponseMessage SearchForStudies
@@ -113,7 +98,7 @@ namespace DICOMcloud.Wado
         {
             var queryOptions = CreateNewQueryOptions ( ) ;
             
-            queryOptions.Limit = Math.Min ( MaximumResultsLimit, qidoRequest.Limit.HasValue ? qidoRequest.Limit.Value : MaximumResultsLimit ) ;
+            queryOptions.Limit = Math.Min ( this._options.Value.MaximumResultsLimit, qidoRequest.Limit.HasValue ? qidoRequest.Limit.Value : this._options.Value.MaximumResultsLimit ) ;
             queryOptions.Offset = Math.Max ( 0, qidoRequest.Offset.HasValue ? qidoRequest.Offset.Value : 0 ) ;
             
             return queryOptions ;
@@ -178,16 +163,20 @@ namespace DICOMcloud.Wado
                 AddPreviewInstanceHeader(results.Result, response);
             }
 
+
             AddPaginationHeders(request, response, results);
 
         }
 
-        private static void AddPaginationHeders(IQidoRequestModel request, HttpResponseMessage response, PagedResult<DicomDataset> results)
+        private void AddPaginationHeders(IQidoRequestModel request, HttpResponseMessage response, PagedResult<DicomDataset> results)
         {
             LinkHeaderBuilder headerBuilder = new LinkHeaderBuilder ( ) ;
 
+
+
+            //Todo : Test
             response.Headers.Add ( "link", 
-                                    headerBuilder.GetLinkHeader ( results, HttpContext.Current.Request.Url.AbsoluteUri ) ) ;
+                                    headerBuilder.GetLinkHeader ( results, this._httpcontextaccessor.HttpContext.Request.ReturnAbsolutePath())) ;
             
             response.Headers.Add ( "X-Total-Count", results.TotalCount.ToString() ) ;
 
@@ -400,7 +389,7 @@ namespace DICOMcloud.Wado
 
             if ( !Char.IsDigit (tagString[0]))
             {
-                var element = Dicom.DicomDictionary.Default.Where ( n=>n.Keyword.ToLower( ) == tagString.ToLower()).FirstOrDefault ( ) ;
+                var element = FellowOakDicom.DicomDictionary.Default.Where ( n=>n.Keyword.ToLower( ) == tagString.ToLower()).FirstOrDefault ( ) ;
 
                 if ( null == element )
                 {
