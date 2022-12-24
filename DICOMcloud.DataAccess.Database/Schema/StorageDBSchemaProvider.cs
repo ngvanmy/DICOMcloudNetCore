@@ -1,5 +1,5 @@
 ﻿
-using fo = Dicom;
+using fo = FellowOakDicom;
 using System;
 using System.Collections.Generic;
 using System.Data;

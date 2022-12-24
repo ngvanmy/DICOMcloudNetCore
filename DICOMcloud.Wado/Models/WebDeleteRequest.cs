@@ -1,5 +1,5 @@
 ﻿
-using fo = Dicom;
+using fo = FellowOakDicom;
 
 namespace DICOMcloud.Wado.Models
 {

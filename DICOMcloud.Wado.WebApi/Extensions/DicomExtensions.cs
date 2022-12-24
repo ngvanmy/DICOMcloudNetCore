@@ -13,7 +13,7 @@ namespace DICOMcloud.Wado.WebApi.Extensions
 
     using System;
     using System.Linq;
-    using Dicom;
+    using FellowOakDicom;
     using DICOMcloud.Azure.IO;
     using DICOMcloud.DataAccess;
     using DICOMcloud.DataAccess.Database;

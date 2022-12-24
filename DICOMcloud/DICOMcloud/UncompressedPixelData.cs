@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dicom;
-using fo = Dicom ;
-using Dicom.Imaging ;
-using Dicom.Imaging.Codec;
+﻿using FellowOakDicom;
+using FellowOakDicom.Imaging;
+using fo = FellowOakDicom;
 
 namespace DICOMcloud
 {
@@ -16,7 +10,7 @@ namespace DICOMcloud
         {
             if (ds.InternalTransferSyntax.IsEncapsulated)
             {
-                Dataset = ds.Clone(DicomTransferSyntax.ImplicitVRLittleEndian).NotValidated();
+                Dataset = ds.Clone().NotValidated();
             }
             else
             {

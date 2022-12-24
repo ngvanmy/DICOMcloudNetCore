@@ -4,9 +4,10 @@ using DICOMcloud.Media;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Dicom ;
-using Dicom.Imaging.Codec ;
+using FellowOakDicom ;
+using FellowOakDicom.Imaging.Codec ;
 using System.Threading.Tasks;
+using System;
 
 namespace DICOMcloud.Pacs
 {
@@ -89,8 +90,20 @@ namespace DICOMcloud.Pacs
             {
                 await foreach (IStorageLocation location in StorageService.EnumerateLocation(fromMediaID))
                 {
-                    DicomFile defaultFile = DicomFile.Open(await location.GetReadStream());
+                    //DicomFile defaultFile=null;
+                    //try
+                    //{
+                    //    defaultFile = DicomFile.Open(await location.GetReadStream());
+                    //    Console.WriteLine("Reading dicom file " + location.ID);
+                    //}
+                    //catch(Exception ex)
+                    //{
+                    //    Console.WriteLine(ex.Message);
+                    //}
 
+                    Stream stream =await location.GetReadStream();
+                    stream.Position = 0;
+                    DicomFile defaultFile = DicomFile.Open(stream);
                     foreach (var transformedLocation in TransformDataset(defaultFile.Dataset, toMediaType, toTransferSyntax, frameList))
                     {
                         yield return new ObjectRetrieveResult(transformedLocation, toTransferSyntax);

@@ -1,4 +1,4 @@
-﻿using fo = Dicom;
+﻿using fo = FellowOakDicom;
 using DICOMcloud.Wado.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using DICOMcloud.Pacs;
 using DICOMcloud.Media;
 using DICOMcloud.DataAccess;
 using DICOMcloud.Messaging;
-using Dicom;
+using FellowOakDicom;
 using Microsoft.Extensions.Options;
 using DICOMcloud.Wado.Configs;
 

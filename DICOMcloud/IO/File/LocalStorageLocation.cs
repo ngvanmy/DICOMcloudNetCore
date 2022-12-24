@@ -107,7 +107,14 @@ namespace DICOMcloud.IO
 
         public Task<Stream> GetReadStream()
         {
-            return new Task<Stream>(() => File.OpenRead (ID));
+            Console.WriteLine(ID);
+            try
+            {
+                return new Task<Stream>(() => File.OpenRead(ID));
+            }
+            catch(Exception ex) { 
+                Console.WriteLine(ex.Message); }
+            return null;
         }
 
         public string ContentType 

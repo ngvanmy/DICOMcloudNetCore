@@ -3,7 +3,7 @@ using System;
 using System.Net.Http;
 using DICOMcloud.Wado.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using fo = Dicom;
+using fo = FellowOakDicom;
 
 namespace DICOMcloud.Wado
 {

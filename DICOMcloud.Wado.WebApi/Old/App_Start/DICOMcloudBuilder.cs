@@ -1,6 +1,6 @@
 ﻿// using System.Linq;
 // using System.Net.Http ;
-// using Dicom;
+// using FellowOakDicom;
 // using DICOMcloud.Azure.IO;
 // using DICOMcloud.DataAccess;
 // using DICOMcloud.DataAccess.Database.Schema;
@@ -13,7 +13,7 @@
 // using Microsoft.WindowsAzure.Storage;
 // using StructureMap;
 // using System;
-// using fo = Dicom;
+// using fo = FellowOakDicom;
 // using System.Web.Http;
 // using System.Web.Http.ExceptionHandling;
 // using DICOMcloud.Wado.WebApi.Exceptions;

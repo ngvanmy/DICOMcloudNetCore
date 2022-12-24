@@ -1,4 +1,4 @@
-﻿using fo = Dicom;
+﻿using fo = FellowOakDicom;
 
 namespace DICOMcloud.Pacs.Commands
 {

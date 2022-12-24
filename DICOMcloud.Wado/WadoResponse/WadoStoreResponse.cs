@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using Dicom;
+using FellowOakDicom;
 using DICOMcloud.Wado.Configs;
 using Microsoft.Extensions.Options;
 

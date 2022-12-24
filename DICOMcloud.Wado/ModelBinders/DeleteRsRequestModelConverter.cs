@@ -1,5 +1,5 @@
 ﻿
-using Dicom;
+using FellowOakDicom;
 using DICOMcloud.Wado.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net.Http;

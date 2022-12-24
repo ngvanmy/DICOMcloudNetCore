@@ -8,7 +8,7 @@ using DICOMcloud.Media;
 using System.Net.Http.Headers;
 using DICOMcloud.IO;
 using DICOMcloud;
-using fo = Dicom;
+using fo = FellowOakDicom;
 using System.IO;
 using System;
 using System.Threading.Tasks;
