@@ -6,6 +6,7 @@ namespace DICOMcloud.Wado
     using System.Collections.Specialized;
     using System.Linq;
     using System.Net.Http;
+    using DICOMcloud.Wado.Extensions;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Routing;
 
@@ -31,7 +32,10 @@ namespace DICOMcloud.Wado
 
             return result;
         }
-
+        public static HttpResponseMessageResult ToHttpResponseMessageResult(this HttpResponseMessage httpResponse)
+        {
+            return new HttpResponseMessageResult(httpResponse);
+        }
         public static HttpRequestMessage ToHttpRequestMessage(this HttpRequest req)
         => new HttpRequestMessage()
             .SetMethod(req)

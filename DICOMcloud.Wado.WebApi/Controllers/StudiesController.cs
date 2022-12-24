@@ -1,4 +1,5 @@
-﻿using DICOMcloud.Wado.Models;
+﻿using DICOMcloud.Wado.Extensions;
+using DICOMcloud.Wado.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Http;
@@ -32,13 +33,13 @@ namespace DICOMcloud.Wado.WebApi.Controllers
         [Route("qidors/studies")]
         [Route("api/studies")]
         [HttpGet]
-        public HttpResponseMessage SearchForStudies
+        public HttpResponseMessageResult SearchForStudies
         (
             [ModelBinder(typeof(QidoRequestModelBinder))]
             IQidoRequestModel request
         )
         {
-            return QidoService.SearchForStudies(request);
+            return QidoService.SearchForStudies(request).ToHttpResponseMessageResult();
         }
 
 
