@@ -13,17 +13,18 @@ namespace DICOMcloud.DataAccess.Database
         public ISQLStatementsProvider SQLStatementsProvider { get; private set; }
         public IList<System.Data.IDbDataParameter> Parameters { get; protected set; }
         public string InsertString {  get ; protected set ; }
-        public ObjectArchieveStorageBuilder(ISQLStatementsProvider sqlStatementsProvider)
+
+        public ObjectArchieveStorageBuilder (ISQLStatementsProvider sqlStatementsProvider) 
         {
             SQLStatementsProvider = sqlStatementsProvider;
-            Parameters = new List<System.Data.IDbDataParameter>();
+            Parameters = new List<System.Data.IDbDataParameter> ( ) ;
         }
         //public ObjectArchieveStorageBuilder ( ) 
         //{
         //    Parameters = new List<System.Data.IDbDataParameter> ( ) ;
         //}
         
-        public virtual string GetInsertText()
+        public virtual void SetInsertText ( IDbCommand cmd )
         {
             StringBuilder result = new StringBuilder();
 

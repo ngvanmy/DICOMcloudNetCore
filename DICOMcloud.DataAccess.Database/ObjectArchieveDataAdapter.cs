@@ -17,25 +17,27 @@ namespace DICOMcloud.DataAccess.Database
     {
         #region Public
 
-        //public ObjectArchieveDataAdapter 
-        //( 
-        //    DbSchemaProvider schemaProvider, 
-        //    IDatabaseFactory database 
-        //) : this ( schemaProvider, database, null)
-        //{
-        //}
-        public ObjectArchieveDataAdapter
-     (
-         DbSchemaProvider schemaProvider,
-         IDatabaseFactory database,
-         ISQLStatementsProvider sqlStatementsProvider,
-         ISortingStrategyFactory sortingStrategyFactory = null
-     )
+        public ObjectArchieveDataAdapter 
+        ( 
+            DbSchemaProvider schemaProvider, 
+            IDatabaseFactory database,
+            ISQLStatementsProvider sqlStatementsProvider
+        ) : this ( schemaProvider, database, sqlStatementsProvider, null)
         {
-            SchemaProvider = schemaProvider;
-            Database = database;
-            SqlStatementsProvider = sqlStatementsProvider;
-            SortingStrategyFactory = sortingStrategyFactory ?? new SortingStrategyFactory(schemaProvider);
+        }
+
+        public ObjectArchieveDataAdapter 
+        ( 
+            DbSchemaProvider schemaProvider, 
+            IDatabaseFactory database,
+            ISQLStatementsProvider sqlStatementsProvider,
+            ISortingStrategyFactory sortingStrategyFactory = null
+        )
+        {
+            SchemaProvider          = schemaProvider ;
+            Database                = database ;
+            SqlStatementsProvider   = sqlStatementsProvider;
+            SortingStrategyFactory  = sortingStrategyFactory ?? new SortingStrategyFactory ( schemaProvider ) ;
         }
         //public ObjectArchieveDataAdapter 
         //( 
@@ -358,7 +360,7 @@ StorageDbSchemaProvider.MetadataTable.OwnerColumn ) ;
             
             FillInsertParameters ( conditions, data, insertCommand, stroageBuilder ) ;
             
-            insertCommand.CommandText = stroageBuilder.GetInsertText ( ) ;
+            stroageBuilder.SetInsertText (insertCommand) ;
         }
         
         protected virtual void ProcessSelectStudy
@@ -446,7 +448,7 @@ StorageDbSchemaProvider.MetadataTable.OwnerColumn ) ;
                         foreach ( var column in SchemaProvider.GetColumnInfo ( dicomParam.KeyTag ) )
                         { 
                             column.Values = new string [] { stringValues[++index]} ;
-                                
+
                             stroageBuilder.ProcessColumn ( column, insertCommad, Database.CreateParameter ) ;
                         }
                     }
@@ -466,12 +468,12 @@ StorageDbSchemaProvider.MetadataTable.OwnerColumn ) ;
 
         protected virtual QueryBuilder CreateQueryBuilder ( ) 
         {
-            return new QueryBuilder ( ) ;
+            return new QueryBuilder (SqlStatementsProvider.SelectStatementsProvider) ;
         }
 
         protected virtual ObjectArchieveStorageBuilder CreateStorageBuilder ( ) 
         {
-            return new ObjectArchieveStorageBuilder (SqlStatementsProvider ) ;
+            return new ObjectArchieveStorageBuilder (SqlStatementsProvider) ;
         }
 
         protected virtual IList<string> GetValues ( IDicomDataParameter condition )
