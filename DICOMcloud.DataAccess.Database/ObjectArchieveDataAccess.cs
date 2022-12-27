@@ -104,6 +104,7 @@ namespace DICOMcloud.DataAccess
 
             try
             {
+                
                 int rowsInserted = cmd.ExecuteNonQuery ( );
 
                 if ( rowsInserted <= 0 )
@@ -115,6 +116,10 @@ namespace DICOMcloud.DataAccess
                 {
                     StoreInstanceMetadata ( objectId, data );
                 }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             finally
             {

@@ -9,6 +9,7 @@ using System.Data;
 using System.Linq;
 using fo = FellowOakDicom;
 using FellowOakDicom;
+using DICOMcloud.DataAccess.Database.SQL;
 
 namespace DICOMcloud.DataAccess.Database
 {
@@ -16,25 +17,37 @@ namespace DICOMcloud.DataAccess.Database
     {
         #region Public
 
-        public ObjectArchieveDataAdapter 
-        ( 
-            DbSchemaProvider schemaProvider, 
-            IDatabaseFactory database 
-        ) : this ( schemaProvider, database, null)
+        //public ObjectArchieveDataAdapter 
+        //( 
+        //    DbSchemaProvider schemaProvider, 
+        //    IDatabaseFactory database 
+        //) : this ( schemaProvider, database, null)
+        //{
+        //}
+        public ObjectArchieveDataAdapter
+     (
+         DbSchemaProvider schemaProvider,
+         IDatabaseFactory database,
+         ISQLStatementsProvider sqlStatementsProvider,
+         ISortingStrategyFactory sortingStrategyFactory = null
+     )
         {
+            SchemaProvider = schemaProvider;
+            Database = database;
+            SqlStatementsProvider = sqlStatementsProvider;
+            SortingStrategyFactory = sortingStrategyFactory ?? new SortingStrategyFactory(schemaProvider);
         }
-
-        public ObjectArchieveDataAdapter 
-        ( 
-            DbSchemaProvider schemaProvider, 
-            IDatabaseFactory database,
-            ISortingStrategyFactory sortingStrategyFactory = null
-        )
-        {
-            SchemaProvider          = schemaProvider ;
-            Database                = database ;
-            SortingStrategyFactory  = sortingStrategyFactory ?? new SortingStrategyFactory ( schemaProvider ) ;
-        }
+        //public ObjectArchieveDataAdapter 
+        //( 
+        //    DbSchemaProvider schemaProvider, 
+        //    IDatabaseFactory database,
+        //    ISortingStrategyFactory sortingStrategyFactory = null
+        //)
+        //{
+        //    SchemaProvider          = schemaProvider ;
+        //    Database                = database ;
+        //    SortingStrategyFactory  = sortingStrategyFactory ?? new SortingStrategyFactory ( schemaProvider ) ;
+        //}
 
         public DbSchemaProvider SchemaProvider
         {
@@ -47,6 +60,7 @@ namespace DICOMcloud.DataAccess.Database
             get ;
             protected set ;
         }
+        public ISQLStatementsProvider SqlStatementsProvider { get; private set; }
 
         public ISortingStrategyFactory SortingStrategyFactory { get; set; }
 
@@ -457,7 +471,7 @@ StorageDbSchemaProvider.MetadataTable.OwnerColumn ) ;
 
         protected virtual ObjectArchieveStorageBuilder CreateStorageBuilder ( ) 
         {
-            return new ObjectArchieveStorageBuilder ( ) ;
+            return new ObjectArchieveStorageBuilder (SqlStatementsProvider ) ;
         }
 
         protected virtual IList<string> GetValues ( IDicomDataParameter condition )

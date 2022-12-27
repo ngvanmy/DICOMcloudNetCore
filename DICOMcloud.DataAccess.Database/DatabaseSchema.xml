@@ -30,8 +30,11 @@
       <column name="AccessionNumber" table="Study" defenition="[AccessionNumber] [nvarchar](16) NULL" tag="524368" />
       <column name="StudyDate" table="Study" isDate="true" defenition="[StudyDate] [datetime] NULL" tag="524320,524336" />
       <column name="StudyDescription" table="Study" defenition="[StudyDescription] [nvarchar](64) NULL" tag="528432" />
+	   <column name="CloudUploaded" table="Study" defenition="[CloudUploaded] [bit]" tag="" />
+	   <column name="StudyStoragePath" table="Study" defenition="[StudyStoragePath] [nvarchar](64) NULL" tag="" />
 
-      <column name="SeriesKey" table="Series" key="true" defenition="[SeriesKey] [bigint] NOT NULL" tag="" />
+
+	   <column name="SeriesKey" table="Series" key="true" defenition="[SeriesKey] [bigint] NOT NULL" tag="" />
       <column name="Series_StudyKey" table="Series" foreign="true" defenition="[Series_StudyKey] [bigint] NOT NULL" tag="" />
       <column name="SeriesInstanceUid" table="Series" modelKey="true" defenition="[SeriesInstanceUid] [nchar](64) NOT NULL" tag="2097166" />
       <column name="SeriesNumber" table="Series" isNum="true" defenition="[SeriesNumber] [int] NULL" tag="2097169" />

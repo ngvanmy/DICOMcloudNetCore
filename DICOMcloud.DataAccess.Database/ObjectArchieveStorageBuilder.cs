@@ -1,5 +1,6 @@
 ﻿using DICOMcloud;
 using DICOMcloud.DataAccess.Database.Schema;
+using DICOMcloud.DataAccess.Database.SQL;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,35 +10,59 @@ namespace DICOMcloud.DataAccess.Database
 {
     public class ObjectArchieveStorageBuilder
     {
+        public ISQLStatementsProvider SQLStatementsProvider { get; private set; }
         public IList<System.Data.IDbDataParameter> Parameters { get; protected set; }
         public string InsertString {  get ; protected set ; }
-
-        public ObjectArchieveStorageBuilder ( ) 
+        public ObjectArchieveStorageBuilder(ISQLStatementsProvider sqlStatementsProvider)
         {
-            Parameters = new List<System.Data.IDbDataParameter> ( ) ;
+            SQLStatementsProvider = sqlStatementsProvider;
+            Parameters = new List<System.Data.IDbDataParameter>();
         }
+        //public ObjectArchieveStorageBuilder ( ) 
+        //{
+        //    Parameters = new List<System.Data.IDbDataParameter> ( ) ;
+        //}
         
         public virtual string GetInsertText()
         {
-            StringBuilder result = new StringBuilder ( SqlInsertStatments.BeginTransaction ) ;
-            
-            result.AppendLine ( ) ;
+            StringBuilder result = new StringBuilder();
 
-            foreach ( var insertKeyValue in _tableToInsertStatments )
+            result.AppendLine(SQLStatementsProvider.GeneralStatementsProvider.BeginTransaction);
+
+            result.AppendLine();
+
+            foreach (var insertKeyValue in _tableToInsertStatments)
             {
-                var insert = insertKeyValue.Value ;
+                var insert = insertKeyValue.Value;
 
-                string columns = string.Join ( ", ", insert.ColumnNames ) ;
-                string values  = string.Join ( ", ", insert.ParametersValueNames ) ;
-            
-                result.AppendLine ( SqlInsertStatments.GetTablesKey ( insertKeyValue.Key ) ) ;
-                result.AppendFormat ( insert.InsertTemplate, columns, values ) ;
-                result.AppendLine ( ) ;
+                result.AppendLine(SQLStatementsProvider.InsertUpdateStatementsProvider.GetDeclareForeignStatement(insertKeyValue.Key));
+
+                result.AppendLine(SQLStatementsProvider.InsertUpdateStatementsProvider.FormatInsertIntoTable(insert.InsertTemplate, insert.ColumnNames, insert.ParametersValueNames));
             }
 
-            result.AppendLine ( SqlInsertStatments.CommitTransaction ) ;
+            result.AppendLine(SQLStatementsProvider.GeneralStatementsProvider.CommitTransaction);
 
-            return result.ToString ( ) ;
+            return result.ToString();
+
+            //StringBuilder result = new StringBuilder ( SqlInsertStatments.BeginTransaction ) ;
+            
+            //result.AppendLine ( ) ;
+
+            //foreach ( var insertKeyValue in _tableToInsertStatments )
+            //{
+            //    var insert = insertKeyValue.Value ;
+
+            //    string columns = string.Join ( ", ", insert.ColumnNames ) ;
+            //    string values  = string.Join ( ", ", insert.ParametersValueNames ) ;
+            
+            //    result.AppendLine ( SqlInsertStatments.GetTablesKey ( insertKeyValue.Key ) ) ;
+            //    result.AppendFormat ( insert.InsertTemplate, columns, values ) ;
+            //    result.AppendLine ( ) ;
+            //}
+
+            //result.AppendLine ( SqlInsertStatments.CommitTransaction ) ;
+
+            //return result.ToString ( ) ;
         }
 
         public void BuildInsertOrUpdateMetadata ( ObjectId instance, IDbCommand insertCommand )
@@ -52,59 +77,86 @@ namespace DICOMcloud.DataAccess.Database
             DataParamFactory parameterFactory
         )
         {
-            InsertSections insert = GetTableInsert ( column.Table ) ;
+            if (null == column.Values || column.Values.Count == 0 || null == column.Values[0]) return;
 
-            insert.ColumnNames.Add ( column.Name ) ;
-            insert.ParametersValueNames.Add ( "@" + column.Name ) ; //TODO: add a parameter name to the column class
+            InsertSections insert = GetTableInsert(column.Table);
+
+            insert.ColumnNames.Add(SQLStatementsProvider.GeneralStatementsProvider.WrapColumn(column.Name));
+            insert.ParametersValueNames.Add(SQLStatementsProvider.GeneralStatementsProvider.GetParameterName(column.Name));
+            //TODO: add a parameter name to the column class
             //insert.ParametersValueNames.Add ( column.Values[0] ) ;
 
 
-            System.Data.IDbDataParameter param ;
-            
-            object value = DBNull.Value ;
-            
-            if ( null != column.Values && column.Values.Count != 0 )
+            System.Data.IDbDataParameter param;
+
+            object value = DBNull.Value;
+
+            if (null != column.Values && column.Values.Count != 0)
             {
                 //TODO: multivalue must be stored in their own table where each value is a row
                 //in order to support proper query
-                value = column.Values[0] ;
-                            
-                if ( null == value )
-                { 
-                    value = DBNull.Value ;
+                value = column.Values[0];
+
+                if (null == value)
+                {
+                    value = DBNull.Value;
                 }
             }
-            
-            param = parameterFactory ( "@" + column.Name, value ) ;
-            
-            Parameters.Add ( param ) ;
-            
-            if ( null != insertCommand )
-            { 
-                insertCommand.Parameters.Add ( param ) ;
+
+            param = parameterFactory(SQLStatementsProvider.GeneralStatementsProvider.GetParameterName(column.Name), value);
+
+            Parameters.Add(param);
+
+            if (null != insertCommand)
+            {
+                if (insertCommand is MySql.Data.MySqlClient.MySqlCommand)
+                {
+                    ((MySql.Data.MySqlClient.MySqlCommand)insertCommand).Parameters.AddWithValue(SQLStatementsProvider.GeneralStatementsProvider.GetParameterName(column.Name), value);
+                }
+                else
+                {
+                    insertCommand.Parameters.Add(param);
+                }
             }
         }
 
         public delegate IDbDataParameter DataParamFactory ( string columnName, object Value ) ; 
         
         protected InsertSections GetTableInsert ( TableKey table )
-        { 
-            InsertSections result = null ;
+        {
+            InsertSections result = null;
 
-            if ( _tableToInsertStatments.TryGetValue ( table, out result) )
-            { 
-                return result ;
+            if (_tableToInsertStatments.TryGetValue(table, out result))
+            {
+                return result;
             }
 
 
-            result = new InsertSections ( ) ;
+            result = new InsertSections();
 
-            result.InsertTemplate = SqlInsertStatments.GetInsertIntoTable ( table ) ;
-            result.TableName      = table.Name ;
+            result.InsertTemplate = SQLStatementsProvider.InsertUpdateStatementsProvider.GetInsertIntoTableFormatted(table);
+            result.TableName = table.Name;
 
-            _tableToInsertStatments.Add ( table, result ) ;
+            _tableToInsertStatments.Add(table, result);
+
+            return result;
+
+            //InsertSections result = null ;
+
+            //if ( _tableToInsertStatments.TryGetValue ( table, out result) )
+            //{ 
+            //    return result ;
+            //}
+
+
+            //result = new InsertSections ( ) ;
+
+            //result.InsertTemplate = SqlInsertStatments.GetInsertIntoTable ( table ) ;
+            //result.TableName      = table.Name ;
+
+            //_tableToInsertStatments.Add ( table, result ) ;
         
-            return result ;
+            //return result ;
         }
 
 
