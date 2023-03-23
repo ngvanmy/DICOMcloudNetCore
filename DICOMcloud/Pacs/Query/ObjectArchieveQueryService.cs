@@ -3,7 +3,7 @@ using DICOMcloud.DataAccess;
 using DICOMcloud.DataAccess.Matching;
 using System;
 using System.Collections.Generic;
-using fo = Dicom;
+using fo = FellowOakDicom;
 
 
 namespace DICOMcloud.Pacs
@@ -58,6 +58,7 @@ namespace DICOMcloud.Pacs
             IQueryOptions options
         )
         {
+            var data = FindPaged(request, options, Enum.GetName(typeof(ObjectQueryLevel), ObjectQueryLevel.Study));
             return FindPaged ( request, options, Enum.GetName (typeof(ObjectQueryLevel), ObjectQueryLevel.Study ) ) ;
         }
 

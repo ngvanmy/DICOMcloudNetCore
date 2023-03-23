@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using fo = Dicom;
+using fo = FellowOakDicom;
 using DICOMcloud.DataAccess;
 
 namespace DICOMcloud.Pacs

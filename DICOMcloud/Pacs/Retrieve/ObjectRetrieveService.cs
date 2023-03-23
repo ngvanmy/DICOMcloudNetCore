@@ -4,8 +4,8 @@ using DICOMcloud.Media;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Dicom ;
-using Dicom.Imaging.Codec ;
+using FellowOakDicom ;
+using FellowOakDicom.Imaging.Codec ;
 using System.Threading.Tasks;
 
 namespace DICOMcloud.Pacs

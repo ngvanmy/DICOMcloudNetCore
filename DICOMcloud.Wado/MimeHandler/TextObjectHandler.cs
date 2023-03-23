@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using fo = Dicom;
+using fo = FellowOakDicom;
 using System.IO;
 using DICOMcloud.Media;
 using DICOMcloud.IO;

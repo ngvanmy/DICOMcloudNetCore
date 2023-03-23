@@ -1,5 +1,5 @@
 ﻿using System;
-using fo = Dicom;
+using fo = FellowOakDicom;
 using DICOMcloud.Pacs.Commands;
 using DICOMcloud.IO;
 

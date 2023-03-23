@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net;
 using DICOMcloud.Pacs;
-using fo = Dicom;
+using fo = FellowOakDicom;
 using DICOMcloud.IO;
 using DICOMcloud.Media;
 

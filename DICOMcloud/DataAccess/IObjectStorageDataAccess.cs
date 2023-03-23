@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Dicom;
+using FellowOakDicom;
 using DICOMcloud;
 using DICOMcloud.DataAccess.Matching;
 

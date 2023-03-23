@@ -1,7 +1,7 @@
 ﻿using DICOMcloud.DataAccess;
 using DICOMcloud.DataAccess.Matching;
 using System.Collections.Generic;
-using fo = Dicom;
+using fo = FellowOakDicom;
 
 namespace DICOMcloud.Pacs
 {

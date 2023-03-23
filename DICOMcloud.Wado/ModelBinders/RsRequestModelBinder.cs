@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dicom.Imaging.Mathematics;
+using FellowOakDicom.Imaging.Mathematics;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DICOMcloud.Wado

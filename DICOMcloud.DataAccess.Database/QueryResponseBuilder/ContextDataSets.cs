@@ -1,4 +1,4 @@
-﻿using fo = Dicom;
+﻿using fo = FellowOakDicom;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

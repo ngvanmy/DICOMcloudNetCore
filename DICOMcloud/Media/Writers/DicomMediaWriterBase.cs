@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using fo = Dicom;
-using Dicom.Imaging ;
+using fo = FellowOakDicom;
 using DICOMcloud.IO;
 using DICOMcloud.Media ;
+using FellowOakDicom.Imaging;
 
 namespace DICOMcloud.Media
 {

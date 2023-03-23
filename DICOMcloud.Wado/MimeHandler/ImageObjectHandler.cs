@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Dicom.Imaging;
-using Dicom.Imaging.Codec;
 using DICOMcloud.IO;
 
 using DICOMcloud.Media;
 using DICOMcloud.Pacs;
 using DICOMcloud.Wado.Models;
-using fo = Dicom;
 
 namespace DICOMcloud.Wado
 {
